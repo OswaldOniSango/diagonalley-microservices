@@ -1,0 +1,132 @@
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users
+      - products
+      - orders
+      - payments
+      - offers
+      - cart
+
+  users:
+    build:
+      context: .
+      dockerfile: services/users/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/users_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+
+  products:
+    build:
+      context: .
+      dockerfile: services/products/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/products_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+
+  orders:
+    build:
+      context: .
+      dockerfile: services/orders/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/orders_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+
+  payments:
+    build:
+      context: .
+      dockerfile: services/payments/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/payments_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
+
+  offers:
+    build:
+      context: .
+      dockerfile: services/offers/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/offers_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+
+  cart:
+    build:
+      context: .
+      dockerfile: services/cart/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/cart_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+      ORDERS_URL: http://orders:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8086:8086"
+
+volumes:
+  pgdata:
