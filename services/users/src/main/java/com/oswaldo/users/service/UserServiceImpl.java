@@ -52,9 +52,18 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public ResponseEntity<?> login(AuthController.LoginRequest req) {
-        return repo.findByEmail(req.email())
-                .filter(u -> encoder.matches(req.password(), u.getPasswordHash()))
-                .map(u -> ResponseEntity.ok(Map.of("token: ", "Bearer " + jwtUtil.generateToken(u.getEmail()))))
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error: ", "Invalid credentials")));
+        User user = repo.findByEmail(req.email()).orElse(null);
+        ResponseEntity<?> responseEntity;
+        if (user != null && encoder.matches(req.password(), user.getPasswordHash())) {
+            responseEntity = ResponseEntity.ok(Map.of(
+                    "token: ", "Bearer " + jwtUtil.generateToken(user.getEmail())
+                    , "name", user.getName()
+                    , "email", user.getEmail()
+            ));
+        } else {
+            responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid email or password"));
+        }
+        return responseEntity;
     }
 }

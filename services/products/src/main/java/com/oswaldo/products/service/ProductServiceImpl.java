@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product get(Long id) {
-        return repo.findById(id).orElseThrow();
+        return repo.findById(id).orElse(new Product());
     }
 
     @Override
