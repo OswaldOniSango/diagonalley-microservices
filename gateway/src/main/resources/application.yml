@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: users
+          uri: http://users:8081
+          predicates:
+            - Path=/users/**,/auth/**
+        - id: products
+          uri: http://products:8082
+          predicates:
+            - Path=/products/**
+        - id: orders
+          uri: http://orders:8083
+          predicates:
+            - Path=/orders/**
+        - id: payments
+          uri: http://payments:8084
+          predicates:
+            - Path=/payments/**
+        - id: offers
+          uri: http://offers:8085
+          predicates:
+            - Path=/offers/**
+        - id: cart
+          uri: http://cart:8086
+          predicates:
+            - Path=/cart/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
