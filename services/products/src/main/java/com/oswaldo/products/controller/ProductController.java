@@ -25,7 +25,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product get(@PathVariable Long id) {
+    public Product get(@PathVariable("id") Long id) {
         return productService.get(id);
     }
 
@@ -36,13 +36,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable Long id, @Valid @RequestBody ProductRequest req) {
+    public Product update(@PathVariable("id") Long id, @Valid @RequestBody ProductRequest req) {
         return productService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         productService.delete(id);
     }
 
