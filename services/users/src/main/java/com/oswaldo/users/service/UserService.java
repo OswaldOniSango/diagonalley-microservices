@@ -10,6 +10,9 @@ public interface UserService {
 
     Map<String, Object> me(Authentication auth);
 
+    ResponseEntity<?> updateRole(Long userId, String role);
+
+    ResponseEntity<?> listUsers();
 
     ResponseEntity<?> registerUser(AuthController.RegisterRequest req);
 

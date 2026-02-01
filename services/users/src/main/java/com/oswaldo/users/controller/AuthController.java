@@ -33,6 +33,6 @@ public class AuthController {
 
     }
 
-    public record RegisterRequest(@NotBlank String name, @Email String email, @NotBlank String password) {}
+    public record RegisterRequest(@NotBlank String name, @NotBlank String lastName, @Email String email, @NotBlank String password) {}
     public record LoginRequest(@Email String email, @NotBlank String password) {}
 }

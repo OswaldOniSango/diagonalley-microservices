@@ -32,6 +32,19 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateToken(String subject, java.util.List<String> roles) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + expirationMs);
+        return Jwts.builder()
+                .setSubject(subject)
+                .setIssuer(issuer)
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .claim("roles", roles)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public Claims parseToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
